@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
 import { MdAdd } from "react-icons/md";
+import { useTodoDispatch, useTodoNextId } from "./TodoContext";
 
 const CircleButton = styled.button`
   background: #748ffc;
@@ -54,7 +55,7 @@ const InsertFormPositioner = styled.div`
   position: absolute;
 `;
 
-const InsertForm = styled.div`
+const InsertForm = styled.form`
   background: #f8f9fa;
   padding: 32px;
   padding-bottom: 72px;
@@ -75,13 +76,35 @@ const Input = styled.input`
 
 const TodoCreate = () => {
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const dispatch = useTodoDispatch();
+  const nextId = useTodoNextId();
+
   const onToggle = () => setOpen(!open);
+  const onChange = (e) => setValue(e.target.value);
+  const onSubmit = (e) => {
+    e.preventDefault(); // To ban refreshing from hitting ENTER
+    dispatch({
+      type: "CREATE",
+      todo: {
+        id: nextId.current,
+        text: value,
+        done: false,
+      },
+    });
+    setValue("");
+    setOpen(false);
+    nextId.current += 1;
+  };
+
   return (
     <>
       {open && (
         <InsertFormPositioner>
-          <InsertForm>
+          <InsertForm onSubmit={onSubmit}>
             <Input
+              value={value}
+              onChange={onChange}
               placeholder="Hit the ENTER after typing a thing to do"
               autoFocus
             />
@@ -95,4 +118,4 @@ const TodoCreate = () => {
   );
 };
 
-export default TodoCreate;
+export default React.memo(TodoCreate);

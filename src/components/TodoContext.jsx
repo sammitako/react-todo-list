@@ -49,7 +49,9 @@ export function TodoProvider({ children }) {
   return (
     <TodoStateContext.Provider value={state}>
       <TodoDispatchContext.Provider value={dispatch}>
-        <TodoNextIdContext value={nextId}>{children}</TodoNextIdContext>
+        <TodoNextIdContext.Provider value={nextId}>
+          {children}
+        </TodoNextIdContext.Provider>
       </TodoDispatchContext.Provider>
     </TodoStateContext.Provider>
   );
@@ -63,6 +65,7 @@ export function useTodoState() {
   if (!context) {
     throw new Error("Cannot find TodoProvider");
   }
+  return context;
 }
 
 // Context for DISPATCH
@@ -71,6 +74,7 @@ export function useTodoDispatch() {
   if (!context) {
     throw new Error("Cannot find TodoProvider");
   }
+  return context;
 }
 
 export function useTodoNextId() {
@@ -78,4 +82,5 @@ export function useTodoNextId() {
   if (!context) {
     throw new Error("Cannot find TodoProvider");
   }
+  return context;
 }
